@@ -1,3 +1,35 @@
+/**
+* \file state_machine.cpp
+* \brief Node that gives new goals
+         for the robot
+* \author Lorenzo Morocutti
+* \version 1.0
+* \date 1/02/2023
+*
+* \details
+* 
+* Publishes to:<BR>
+*   None
+* 
+* Subscribes to:<BR>
+*   None
+* 
+* ServiceClient:<BR>
+*   /position_server (rt2_assignment1::RandomPosition)
+*
+* ServiceServer:<BR>
+*   /user_interface (rt2_assignment1::Coomand)
+*
+* Description:
+*
+* This node communicates with the action server for the
+* go_to_point behavior, giving a new goal each time a 'start'
+* request is received from the user_interface.
+* It also manages the stop behavior, sotpping a running goal
+* when the request is a 'stop'.
+*
+*/
+
 #include "ros/ros.h"
 #include "rt2_assignment1/Command.h"
 #include "rt2_assignment1/Position.h"
@@ -8,6 +40,17 @@
 
 bool start = false;
 
+/**
+* This function is the service callback 
+* that sets the start/stop robot state.
+*
+* \param req (rt2_assignment1::Command::Request &):
+*   Service request, containing the command (string).
+* \param res (rt2_assignment1::Command::Response &):
+*   Service response, the value of the 'start' state (bool).
+*
+* \retval user_interface() : true.
+*/ 
 bool user_interface(rt2_assignment1::Command::Request &req, rt2_assignment1::Command::Response &res){
     if (req.command == "start")
     {
