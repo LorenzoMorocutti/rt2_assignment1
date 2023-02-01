@@ -1,0 +1,531 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="namespacego__to__point" kind="namespace" language="Python">
+    <compoundname>go_to_point</compoundname>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacego__to__point_1a91dbaab25e6080f6b5dbf82cac6ce75c" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>int go_to_point::position_</definition>
+        <argsstring></argsstring>
+        <name>position_</name>
+        <initializer>=  Point()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="52" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacego__to__point_1ae444f19eb2019982432760ace036ce03" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int go_to_point.yaw_</definition>
+        <argsstring></argsstring>
+        <name>yaw_</name>
+        <initializer>=  0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="53" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacego__to__point_1aa2d0ef255bcf5d5faf9ca2764730fb17" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int go_to_point.state_</definition>
+        <argsstring></argsstring>
+        <name>state_</name>
+        <initializer>=  0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="55" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacego__to__point_1a57b4090d0abcbcf0bfa2bcb9329d3036" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>go_to_point.pub_</definition>
+        <argsstring></argsstring>
+        <name>pub_</name>
+        <initializer>=  None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="56" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacego__to__point_1a67f95834f0959feb3facd17bc7fa2b38" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int go_to_point.yaw_precision_</definition>
+        <argsstring></argsstring>
+        <name>yaw_precision_</name>
+        <initializer>=  math.pi / 9</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="59" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacego__to__point_1af74ccf49164d0478ca8343e2031d5813" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int go_to_point.yaw_precision_2_</definition>
+        <argsstring></argsstring>
+        <name>yaw_precision_2_</name>
+        <initializer>=  math.pi / 90</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="60" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacego__to__point_1a6a1e4eb20ebd4fce0fc56b0ebfd7a8d5" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float go_to_point.dist_precision_</definition>
+        <argsstring></argsstring>
+        <name>dist_precision_</name>
+        <initializer>=  0.1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="61" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacego__to__point_1a524106fc7667a0927951dfd89d52d6a7" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float go_to_point.kp_a</definition>
+        <argsstring></argsstring>
+        <name>kp_a</name>
+        <initializer>=  -3.0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="62" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacego__to__point_1a7bc498652ca66932e704e738b50c297b" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float go_to_point.kp_d</definition>
+        <argsstring></argsstring>
+        <name>kp_d</name>
+        <initializer>=  0.2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="63" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacego__to__point_1acb4e14986fafe5cb73bb8ad0c178869d" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float go_to_point.ub_a</definition>
+        <argsstring></argsstring>
+        <name>ub_a</name>
+        <initializer>=  0.6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="64" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacego__to__point_1afecad4058844db05d8321199e25b4498" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float go_to_point.lb_a</definition>
+        <argsstring></argsstring>
+        <name>lb_a</name>
+        <initializer>=  -0.5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="65" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacego__to__point_1a16c473b9e717200c483d18e66b48152a" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float go_to_point.ub_d</definition>
+        <argsstring></argsstring>
+        <name>ub_d</name>
+        <initializer>=  0.6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="66" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacego__to__point_1a59ee40a427452666310807580d5bf9b8" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>go_to_point.vel</definition>
+        <argsstring></argsstring>
+        <name>vel</name>
+        <initializer>=  Twist()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="70" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacego__to__point_1a2fd68a76b8583598a4bceccdeae5d73b" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>go_to_point.z</definition>
+        <argsstring></argsstring>
+        <name>z</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="72" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacego__to__point_1a328c9a3bb9322f150f2e67371cd73306" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>go_to_point.x</definition>
+        <argsstring></argsstring>
+        <name>x</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="73" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacego__to__point_1a36304a9f313b0579f7fc69fa01695524" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>def</type>
+        <definition>def go_to_point.clbk_odom</definition>
+        <argsstring>(msg)</argsstring>
+        <name>clbk_odom</name>
+        <param>
+          <type>msg</type>
+          <defname>msg</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>    This function is the Odometry callback
+    It retrieves (x,y,theta) from the Odom message.
+        
+    Args: 
+        msg (Odometry): odometry message.
+    Returns:
+         None
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="75" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="75" bodyend="100"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacego__to__point_1a31ee48e5cae36821049b572a96b7c8be" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>def</type>
+        <definition>def go_to_point.change_state</definition>
+        <argsstring>(state)</argsstring>
+        <name>change_state</name>
+        <param>
+          <type>state</type>
+          <defname>state</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>    This function has the scope to update the current global state
+
+    Args:
+        state (int): new updated state
+    Returns:
+        None
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="101" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="101" bodyend="114"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacego__to__point_1ac688bb56fa84763ea2edefc30cae032a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>def</type>
+        <definition>def go_to_point.normalize_angle</definition>
+        <argsstring>(angle)</argsstring>
+        <name>normalize_angle</name>
+        <param>
+          <type>angle</type>
+          <defname>angle</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>    This function normalizes the angle between [-pi,pi].
+
+    Args:
+        angle (float): input angle
+    Returns:
+        angle (float): normalized angle
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="115" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="115" bodyend="128"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacego__to__point_1aaa40c80713fb412b556666585e35e508" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>def</type>
+        <definition>def go_to_point.velocity_clbk</definition>
+        <argsstring>(velocity)</argsstring>
+        <name>velocity_clbk</name>
+        <param>
+          <type>velocity</type>
+          <defname>velocity</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>    The data received on the topic /vel are saved in vel, a global 
+    variable of type Twist.
+
+    Args:
+        velocity (float): input velocity
+    Returns:
+        None
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="129" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="129" bodyend="141"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacego__to__point_1a9c3011a3065fcbefcc1c5ad8c9979669" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>def</type>
+        <definition>def go_to_point.fix_yaw</definition>
+        <argsstring>(des_pos)</argsstring>
+        <name>fix_yaw</name>
+        <param>
+          <type>des_pos</type>
+          <defname>des_pos</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>    This function orients the robot in the desidered way.
+    The function is used in two situations:
+        1. When the robot has to be oriented toward 
+           the goal (x,y) position.
+        2. When the robot has already reached the goal (x,y) position and 
+           it has to achieve the goal orientation.
+    It sets the angular velocity to reach the goal position.
+    It also updates the state to the behavior go_straight, based on 
+    the orientation error.
+
+    Args:
+        des_pos (Point): desidered (x,y) position
+    Returns:
+        None
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="142" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="142" bodyend="175"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacego__to__point_1ac8579665c0fbf665f734476554fac37d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>def</type>
+        <definition>def go_to_point.go_straight_ahead</definition>
+        <argsstring>(des_pos)</argsstring>
+        <name>go_straight_ahead</name>
+        <param>
+          <type>des_pos</type>
+          <defname>des_pos</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>    This function implements the behavior that allows the
+    robot to reach the goal.
+    It sets the linear and angular velocities depending on the
+    distance to the goal pose.
+
+    Args:
+        des_pos (Point): desidered (x,y) position
+    Returns:
+        None
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="176" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="176" bodyend="211"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacego__to__point_1a4a406386ca62830c19c93949e923f7bd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>def</type>
+        <definition>def go_to_point.fix_final_yaw</definition>
+        <argsstring>(des_yaw)</argsstring>
+        <name>fix_final_yaw</name>
+        <param>
+          <type>des_yaw</type>
+          <defname>des_yaw</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>    This function orients the robot in the desidered 
+    orientation, based the error between the current 
+    orientation and the desired one.
+    It sets the angular velocity to obtain the desidered
+    orientation.
+    It also updates the state to done, once the orientation
+    is set. 
+
+    Args:
+        des_yaw (float): desidered (theta) position
+    Returns:
+        None
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="212" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="212" bodyend="241"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacego__to__point_1ac2587220a4ac9c845bc9c5b0b45d5835" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>def</type>
+        <definition>def go_to_point.done</definition>
+        <argsstring>()</argsstring>
+        <name>done</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>    This funciton has the aim of stopping the robot.
+    It sets the linear and the angular velocity to zero.
+
+    Args:
+        None
+    Returns:
+        None
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="242" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="242" bodyend="256"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacego__to__point_1aeabc057cb3ea91a0d632b618eec6e961" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>def</type>
+        <definition>def go_to_point.time_check</definition>
+        <argsstring>(e_t)</argsstring>
+        <name>time_check</name>
+        <param>
+          <type>e_t</type>
+          <defname>e_t</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>    This function checks the time.
+
+    Args:
+        e_t (float): elapsed time
+    Returns:
+        None
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="257" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="257" bodyend="267"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacego__to__point_1aa8c9e45da31814a8cd403b354dbd6ba4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>def</type>
+        <definition>def go_to_point.go_to_point</definition>
+        <argsstring>(req)</argsstring>
+        <name>go_to_point</name>
+        <param>
+          <type>req</type>
+          <defname>req</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>    This function implements the state machine.
+    It sets the correct behavior that the robot
+    will follow, based on the current robot state.
+    The FMS continues until the goal is reached or
+    the goal is cancelled
+
+    Args:
+        req (MovingActionGoal):(x,y,theta) goal pose)
+    Returns:
+        None
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="268" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="268" bodyend="314"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacego__to__point_1ab92bd6db1ec323a4d795ed6cb40aebe1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>def</type>
+        <definition>def go_to_point.main</definition>
+        <argsstring>()</argsstring>
+        <name>main</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="315" column="1" bodyfile="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" bodystart="315" bodyend="328"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><verbatim>.. module:: go_to_point
+    :platform: Unix
+    :synopsis: Node that implements the go_to_point behavior
+
+.. moduleauthor:: Lorenzo Morocutti &lt;lorenzo.morocutti@libero.it&gt;
+
+Publishes to:
+    /cmd_vel(geometry_msgs.msg.Twist)
+    /destination(std_msgs.msg.Float32)
+
+Subscribes to:
+    /sub_odom(nav_msgs.msg.Odometry)
+    /sub_vel(geometry_msgs.msg.Twist)
+
+ServiceServer:
+   none
+
+ActionServer:
+    /go_to_point (rt2_assignment1.action.Moving)
+
+ Description:
+ 
+ The node controls the behavior of the non-holonomic
+ according to the go_to_point behavior via an action
+ server. A FSM is used to model the behavior every 
+ time a new goal pose is received: firstly the robot
+ alight its position with the goal&apos;s one, then it goes
+ straight to the goal position, it aligns with the 
+ goal orientation and then the goal pose is reached.
+
+ The linear and angular velocities are set by the node
+ /user_interface and they are received on the topic 
+ /vel. Both the velocities are set to zero in case
+ the goal is cancelled by the client.
+</verbatim> </para>
+    </detaileddescription>
+    <location file="/root/ros_ws/src/rt2_assignment1/rt2_assignment1/scripts/go_to_point.py" line="1" column="1"/>
+  </compounddef>
+</doxygen>

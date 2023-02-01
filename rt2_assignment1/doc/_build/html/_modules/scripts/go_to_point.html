@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scripts.go_to_point &mdash; rt2_assignment_sphinx 2023 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> rt2_assignment_sphinx
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">rt2_assignment_sphinx</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scripts.go_to_point</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scripts.go_to_point</h1><div class="highlight"><pre>
+<span></span><span class="ch">#! /usr/bin/env python</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. module:: go_to_point</span>
+<span class="sd">    :platform: Unix</span>
+<span class="sd">    :synopsis: Node that implements the go_to_point behavior</span>
+
+<span class="sd">.. moduleauthor:: Lorenzo Morocutti &lt;lorenzo.morocutti@libero.it&gt;</span>
+
+<span class="sd">Publishes to:</span>
+<span class="sd">    /cmd_vel(geometry_msgs.msg.Twist)</span>
+<span class="sd">    /destination(std_msgs.msg.Float32)</span>
+
+<span class="sd">Subscribes to:</span>
+<span class="sd">    /sub_odom(nav_msgs.msg.Odometry)</span>
+<span class="sd">    /sub_vel(geometry_msgs.msg.Twist)</span>
+
+<span class="sd">ServiceServer:</span>
+<span class="sd">   none</span>
+
+<span class="sd">ActionServer:</span>
+<span class="sd">    /go_to_point (rt2_assignment1.action.Moving)</span>
+
+<span class="sd"> Description:</span>
+<span class="sd"> </span>
+<span class="sd"> The node controls the behavior of the non-holonomic</span>
+<span class="sd"> according to the go_to_point behavior via an action</span>
+<span class="sd"> server. A FSM is used to model the behavior every </span>
+<span class="sd"> time a new goal pose is received: firstly the robot</span>
+<span class="sd"> alight its position with the goal&#39;s one, then it goes</span>
+<span class="sd"> straight to the goal position, it aligns with the </span>
+<span class="sd"> goal orientation and then the goal pose is reached.</span>
+
+<span class="sd"> The linear and angular velocities are set by the node</span>
+<span class="sd"> /user_interface and they are received on the topic </span>
+<span class="sd"> /vel. Both the velocities are set to zero in case</span>
+<span class="sd"> the goal is cancelled by the client.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">rospy</span>
+<span class="kn">from</span> <span class="nn">std_msgs.msg</span> <span class="kn">import</span> <span class="n">Float32</span>
+<span class="kn">from</span> <span class="nn">geometry_msgs.msg</span> <span class="kn">import</span> <span class="n">Twist</span><span class="p">,</span> <span class="n">Point</span><span class="p">,</span> <span class="n">Pose</span>
+<span class="kn">from</span> <span class="nn">nav_msgs.msg</span> <span class="kn">import</span> <span class="n">Odometry</span>
+<span class="kn">from</span> <span class="nn">tf</span> <span class="kn">import</span> <span class="n">transformations</span>
+<span class="kn">from</span> <span class="nn">rt2_assignment1.srv</span> <span class="kn">import</span> <span class="n">Position</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">actionlib</span>
+<span class="kn">import</span> <span class="nn">actionlib.msg</span>
+<span class="kn">from</span> <span class="nn">rt2_assignment1</span> <span class="kn">import</span> <span class="n">msg</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="c1"># robot state variables</span>
+<span class="n">position_</span> <span class="o">=</span> <span class="n">Point</span><span class="p">()</span>
+<span class="n">yaw_</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">position_</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">state_</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">pub_</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="c1"># parameters for control</span>
+<span class="n">yaw_precision_</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">9</span>  <span class="c1"># +/- 20 degree allowed</span>
+<span class="n">yaw_precision_2_</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">90</span>  <span class="c1"># +/- 2 degree allowed</span>
+<span class="n">dist_precision_</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">kp_a</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.0</span> 
+<span class="n">kp_d</span> <span class="o">=</span> <span class="mf">0.2</span>
+<span class="n">ub_a</span> <span class="o">=</span> <span class="mf">0.6</span>
+<span class="n">lb_a</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span>
+<span class="n">ub_d</span> <span class="o">=</span> <span class="mf">0.6</span>
+
+
+<span class="k">global</span> <span class="n">vel</span> 
+<span class="n">vel</span> <span class="o">=</span> <span class="n">Twist</span><span class="p">()</span>
+
+<span class="n">vel</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">vel</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+<div class="viewcode-block" id="clbk_odom"><a class="viewcode-back" href="../../index.html#scripts.go_to_point.clbk_odom">[docs]</a><span class="k">def</span> <span class="nf">clbk_odom</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function is the Odometry callback</span>
+<span class="sd">        It retrieves (x,y,theta) from the Odom message.</span>
+<span class="sd">            </span>
+<span class="sd">        Args: </span>
+<span class="sd">            msg (Odometry): odometry message.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">             None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">position_</span>
+    <span class="k">global</span> <span class="n">yaw_</span>
+
+    <span class="c1"># position</span>
+    <span class="n">position_</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">position</span>
+
+    <span class="c1"># yaw</span>
+    <span class="n">quaternion</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="n">z</span><span class="p">,</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="n">w</span><span class="p">)</span>
+    <span class="n">euler</span> <span class="o">=</span> <span class="n">transformations</span><span class="o">.</span><span class="n">euler_from_quaternion</span><span class="p">(</span><span class="n">quaternion</span><span class="p">)</span>
+    <span class="n">yaw_</span> <span class="o">=</span> <span class="n">euler</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="change_state"><a class="viewcode-back" href="../../index.html#scripts.go_to_point.change_state">[docs]</a><span class="k">def</span> <span class="nf">change_state</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function has the scope to update the current global state</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            state (int): new updated state</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">state_</span>
+    <span class="n">state_</span> <span class="o">=</span> <span class="n">state</span>
+    <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;State changed to [</span><span class="si">%s</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="n">state_</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="normalize_angle"><a class="viewcode-back" href="../../index.html#scripts.go_to_point.normalize_angle">[docs]</a><span class="k">def</span> <span class="nf">normalize_angle</span><span class="p">(</span><span class="n">angle</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function normalizes the angle between [-pi,pi].</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            angle (float): input angle</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            angle (float): normalized angle</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">):</span>
+        <span class="n">angle</span> <span class="o">=</span> <span class="n">angle</span> <span class="o">-</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">angle</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">angle</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">angle</span></div>
+
+
+<div class="viewcode-block" id="velocity_clbk"><a class="viewcode-back" href="../../index.html#scripts.go_to_point.velocity_clbk">[docs]</a><span class="k">def</span> <span class="nf">velocity_clbk</span><span class="p">(</span><span class="n">velocity</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The data received on the topic /vel are saved in vel, a global </span>
+<span class="sd">        variable of type Twist.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            velocity (float): input velocity</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">vel</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">velocity</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">x</span>
+    <span class="n">vel</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">velocity</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span></div>
+
+<div class="viewcode-block" id="fix_yaw"><a class="viewcode-back" href="../../index.html#scripts.go_to_point.fix_yaw">[docs]</a><span class="k">def</span> <span class="nf">fix_yaw</span><span class="p">(</span><span class="n">des_pos</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function orients the robot in the desidered way.</span>
+<span class="sd">        The function is used in two situations:</span>
+<span class="sd">            1. When the robot has to be oriented toward </span>
+<span class="sd">               the goal (x,y) position.</span>
+<span class="sd">            2. When the robot has already reached the goal (x,y) position and </span>
+<span class="sd">               it has to achieve the goal orientation.</span>
+<span class="sd">        It sets the angular velocity to reach the goal position.</span>
+<span class="sd">        It also updates the state to the behavior go_straight, based on </span>
+<span class="sd">        the orientation error.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            des_pos (Point): desidered (x,y) position</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">desired_yaw</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">des_pos</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">position_</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">des_pos</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">position_</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">err_yaw</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="n">desired_yaw</span> <span class="o">-</span> <span class="n">yaw_</span><span class="p">)</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="n">err_yaw</span><span class="p">)</span>
+    <span class="n">twist_msg</span> <span class="o">=</span> <span class="n">Twist</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">err_yaw</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">yaw_precision_2_</span><span class="p">:</span>
+        <span class="n">twist_msg</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">vel</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span>
+        <span class="k">if</span> <span class="n">twist_msg</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span> <span class="o">&gt;</span> <span class="n">ub_a</span><span class="p">:</span>
+            <span class="n">twist_msg</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">vel</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span>
+        <span class="k">elif</span> <span class="n">twist_msg</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span> <span class="o">&lt;</span> <span class="n">lb_a</span><span class="p">:</span>
+            <span class="n">twist_msg</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">vel</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span>
+    <span class="n">pub_</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">twist_msg</span><span class="p">)</span>
+    <span class="c1"># state change conditions</span>
+    <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">err_yaw</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">yaw_precision_2_</span><span class="p">:</span>
+        <span class="c1">#print (&#39;Yaw error: [%s]&#39; % err_yaw)</span>
+        <span class="n">change_state</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="go_straight_ahead"><a class="viewcode-back" href="../../index.html#scripts.go_to_point.go_straight_ahead">[docs]</a><span class="k">def</span> <span class="nf">go_straight_ahead</span><span class="p">(</span><span class="n">des_pos</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function implements the behavior that allows the</span>
+<span class="sd">        robot to reach the goal.</span>
+<span class="sd">        It sets the linear and angular velocities depending on the</span>
+<span class="sd">        distance to the goal pose.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            des_pos (Point): desidered (x,y) position</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">desired_yaw</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">des_pos</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">position_</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">des_pos</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">position_</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">err_yaw</span> <span class="o">=</span> <span class="n">desired_yaw</span> <span class="o">-</span> <span class="n">yaw_</span>
+    <span class="n">err_pos</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">pow</span><span class="p">(</span><span class="n">des_pos</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">position_</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span>
+                        <span class="nb">pow</span><span class="p">(</span><span class="n">des_pos</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">position_</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">err_yaw</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="n">desired_yaw</span> <span class="o">-</span> <span class="n">yaw_</span><span class="p">)</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="n">err_yaw</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">err_pos</span> <span class="o">&gt;</span> <span class="n">dist_precision_</span><span class="p">:</span>
+        <span class="n">twist_msg</span> <span class="o">=</span> <span class="n">Twist</span><span class="p">()</span>
+        <span class="n">twist_msg</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">vel</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">err_pos</span>
+        <span class="k">if</span> <span class="n">twist_msg</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">ub_d</span><span class="p">:</span>
+            <span class="n">twist_msg</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">vel</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">x</span>
+
+        <span class="n">twist_msg</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">vel</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span> <span class="o">*</span> <span class="n">err_yaw</span>
+        <span class="n">pub_</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">twist_msg</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> <span class="c1"># state change conditions</span>
+        <span class="c1">#print (&#39;Position error: [%s]&#39; % err_pos)</span>
+        <span class="n">change_state</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># state change conditions</span>
+    <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">err_yaw</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">yaw_precision_</span><span class="p">:</span>
+        <span class="c1">#print (&#39;Yaw error: [%s]&#39; % err_yaw)</span>
+        <span class="n">change_state</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="fix_final_yaw"><a class="viewcode-back" href="../../index.html#scripts.go_to_point.fix_final_yaw">[docs]</a><span class="k">def</span> <span class="nf">fix_final_yaw</span><span class="p">(</span><span class="n">des_yaw</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function orients the robot in the desidered </span>
+<span class="sd">        orientation, based the error between the current </span>
+<span class="sd">        orientation and the desired one.</span>
+<span class="sd">        It sets the angular velocity to obtain the desidered</span>
+<span class="sd">        orientation.</span>
+<span class="sd">        It also updates the state to done, once the orientation</span>
+<span class="sd">        is set. </span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            des_yaw (float): desidered (theta) position</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">err_yaw</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="n">des_yaw</span> <span class="o">-</span> <span class="n">yaw_</span><span class="p">)</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="n">err_yaw</span><span class="p">)</span>
+    <span class="n">twist_msg</span> <span class="o">=</span> <span class="n">Twist</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">err_yaw</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">yaw_precision_2_</span><span class="p">:</span>
+        <span class="n">twist_msg</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">vel</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span>
+        <span class="k">if</span> <span class="n">twist_msg</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span> <span class="o">&gt;</span> <span class="n">ub_a</span><span class="p">:</span>
+            <span class="n">twist_msg</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">vel</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span>
+        <span class="k">elif</span> <span class="n">twist_msg</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span> <span class="o">&lt;</span> <span class="n">lb_a</span><span class="p">:</span>
+            <span class="n">twist_msg</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">vel</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span>
+    <span class="n">pub_</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">twist_msg</span><span class="p">)</span>
+    <span class="c1"># state change conditions</span>
+    <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">err_yaw</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">yaw_precision_2_</span><span class="p">:</span>
+        <span class="c1">#print (&#39;Yaw error: [%s]&#39; % err_yaw)</span>
+        <span class="n">change_state</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="done"><a class="viewcode-back" href="../../index.html#scripts.go_to_point.done">[docs]</a><span class="k">def</span> <span class="nf">done</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This funciton has the aim of stopping the robot.</span>
+<span class="sd">        It sets the linear and the angular velocity to zero.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            None</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">twist_msg</span> <span class="o">=</span> <span class="n">Twist</span><span class="p">()</span>
+    <span class="n">twist_msg</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">twist_msg</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">pub_</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">twist_msg</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="time_check"><a class="viewcode-back" href="../../index.html#scripts.go_to_point.time_check">[docs]</a><span class="k">def</span> <span class="nf">time_check</span><span class="p">(</span><span class="n">e_t</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function checks the time.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            e_t (float): elapsed time</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pub_t</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">e_t</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="go_to_point"><a class="viewcode-back" href="../../index.html#scripts.go_to_point.go_to_point">[docs]</a><span class="k">def</span> <span class="nf">go_to_point</span><span class="p">(</span><span class="n">req</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function implements the state machine.</span>
+<span class="sd">        It sets the correct behavior that the robot</span>
+<span class="sd">        will follow, based on the current robot state.</span>
+<span class="sd">        The FMS continues until the goal is reached or</span>
+<span class="sd">        the goal is cancelled</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            req (MovingActionGoal):(x,y,theta) goal pose)</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;request received&quot;</span><span class="p">)</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="n">desired_position</span> <span class="o">=</span> <span class="n">Point</span><span class="p">()</span>
+    <span class="n">desired_position</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">target_pose</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">x</span>
+    <span class="n">desired_position</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">target_pose</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">y</span>
+    <span class="n">des_yaw</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">target_pose</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">z</span>
+    <span class="n">change_state</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">act</span><span class="o">.</span><span class="n">is_preempt_requested</span><span class="p">():</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s2">&quot;Action preempted </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">velocity</span> <span class="o">=</span> <span class="n">Twist</span><span class="p">()</span>
+            <span class="n">velocity</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">velocity</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">pub_</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">velocity</span><span class="p">)</span>
+            <span class="n">act</span><span class="o">.</span><span class="n">set_preempted</span><span class="p">()</span>
+            <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+            <span class="n">time_check</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">break</span>
+        <span class="k">elif</span> <span class="n">state_</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">fix_yaw</span><span class="p">(</span><span class="n">desired_position</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">state_</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">go_straight_ahead</span><span class="p">(</span><span class="n">desired_position</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">state_</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">fix_final_yaw</span><span class="p">(</span><span class="n">des_yaw</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">state_</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">done</span><span class="p">()</span>
+            <span class="n">act</span><span class="o">.</span><span class="n">set_succeeded</span><span class="p">()</span>
+            <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+            <span class="n">time_check</span><span class="p">(</span><span class="n">elapsed_time</span><span class="p">)</span>
+            <span class="k">break</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">pub_</span><span class="p">,</span> <span class="n">act</span><span class="p">,</span> <span class="n">pub_t</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">init_node</span><span class="p">(</span><span class="s1">&#39;go_to_point&#39;</span><span class="p">)</span>
+    <span class="n">pub_</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span><span class="s1">&#39;/cmd_vel&#39;</span><span class="p">,</span> <span class="n">Twist</span><span class="p">,</span> <span class="n">queue_size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">sub_odom</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Subscriber</span><span class="p">(</span><span class="s1">&#39;/odom&#39;</span><span class="p">,</span> <span class="n">Odometry</span><span class="p">,</span> <span class="n">clbk_odom</span><span class="p">)</span>
+    <span class="n">pub_t</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span><span class="s1">&#39;/destination&#39;</span><span class="p">,</span> <span class="n">Float32</span><span class="p">,</span> <span class="n">queue_size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">sub_vel</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Subscriber</span><span class="p">(</span><span class="s1">&#39;/vel&#39;</span><span class="p">,</span> <span class="n">Twist</span><span class="p">,</span> <span class="n">velocity_clbk</span><span class="p">)</span>
+    
+    <span class="c1">#service = rospy.Service(&#39;/go_to_point&#39;, Position, go_to_point)</span>
+    <span class="n">act</span> <span class="o">=</span> <span class="n">actionlib</span><span class="o">.</span><span class="n">SimpleActionServer</span><span class="p">(</span><span class="s1">&#39;/go_to_point&#39;</span><span class="p">,</span> <span class="n">msg</span><span class="o">.</span><span class="n">MovingAction</span><span class="p">,</span> <span class="n">execute_cb</span><span class="o">=</span><span class="n">go_to_point</span><span class="p">,</span> <span class="n">auto_start</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1">#(nodehandle, stringname, execute_cb=callback, auto_start)</span>
+    <span class="n">act</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="n">rospy</span><span class="o">.</span><span class="n">spin</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Lorenzo Morocutti.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
