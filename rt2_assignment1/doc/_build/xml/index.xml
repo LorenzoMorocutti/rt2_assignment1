@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.8.17">
+  <compound refid="namespaceconf" kind="namespace"><name>conf</name>
+    <member refid="namespaceconf_1a332f430461432dc465213f884a1e4967" kind="variable"><name>shell</name></member>
+    <member refid="namespaceconf_1a45653c983098153b78e33600e39230eb" kind="variable"><name>project</name></member>
+    <member refid="namespaceconf_1a33fa97cf51dcb25970fbf53f10159589" kind="variable"><name>copyright</name></member>
+    <member refid="namespaceconf_1a637c239d256432248aa8d9f3ab0b8c52" kind="variable"><name>author</name></member>
+    <member refid="namespaceconf_1ade15c5b54093b64d7c428ec19ca5b1cb" kind="variable"><name>version</name></member>
+    <member refid="namespaceconf_1a325dc746d8bf05c54d26351c35a21d90" kind="variable"><name>release</name></member>
+    <member refid="namespaceconf_1ae475e080536acb271a0a0efe56c3ba42" kind="variable"><name>extensions</name></member>
+    <member refid="namespaceconf_1ae850ae634911b713e036b43894fdd525" kind="variable"><name>templates_path</name></member>
+    <member refid="namespaceconf_1a1e0ba7f4cb1d50fa831f1236a77d60f6" kind="variable"><name>source_suffix</name></member>
+    <member refid="namespaceconf_1ae22a29d94a222730836db739d6dbd71e" kind="variable"><name>master_doc</name></member>
+    <member refid="namespaceconf_1ad76a2e6d7bfa880ebb4042c08e8b4e12" kind="variable"><name>language</name></member>
+    <member refid="namespaceconf_1a7ad48fb6f3e9b129c02346ea0d3527c1" kind="variable"><name>exclude_patterns</name></member>
+    <member refid="namespaceconf_1aea2e7ab4a244666c9b2e6231c9d53c2b" kind="variable"><name>pygments_style</name></member>
+    <member refid="namespaceconf_1a7f1b143ff25817758abd21a7db110510" kind="variable"><name>html_theme</name></member>
+    <member refid="namespaceconf_1a3117edf4443d9b8c70a9f0f44294ba79" kind="variable"><name>highlight_language</name></member>
+    <member refid="namespaceconf_1af4fb5d8851ccaade135c2668dd3ced41" kind="variable"><name>html_static_path</name></member>
+    <member refid="namespaceconf_1aab7fddb2766ce3c430d8246fbfdbc7b1" kind="variable"><name>htmlhelp_basename</name></member>
+    <member refid="namespaceconf_1a33619d385ad23765ac6ebb58bf82d43d" kind="variable"><name>latex_elements</name></member>
+    <member refid="namespaceconf_1a7812f49970f3de0d15dd7b9b9a10e3a1" kind="variable"><name>latex_documents</name></member>
+    <member refid="namespaceconf_1a85efc5fee48a26fa2d651f6eeb38fc2b" kind="variable"><name>man_pages</name></member>
+    <member refid="namespaceconf_1a54b0faed214ac92017d5689efbb10672" kind="variable"><name>texinfo_documents</name></member>
+    <member refid="namespaceconf_1a9e0d62d22b83ce34deb3f16ba63cedfe" kind="variable"><name>epub_title</name></member>
+    <member refid="namespaceconf_1a75f94e80cc9b5ce60a0f0a8a096bad8e" kind="variable"><name>epub_exclude_files</name></member>
+    <member refid="namespaceconf_1a8375f4f963de3ac8026eaa9beced9564" kind="variable"><name>intersphinx_mapping</name></member>
+    <member refid="namespaceconf_1a8fe7f0d85f975f4ecba5cb6066959a09" kind="variable"><name>todo_include_todos</name></member>
+    <member refid="namespaceconf_1acb47d2c0c2904fa7d36b63142533f383" kind="variable"><name>breathe_projects</name></member>
+    <member refid="namespaceconf_1a6eba2d2c7ae923054b1c49e686ec89b9" kind="variable"><name>breathe_default_project</name></member>
+    <member refid="namespaceconf_1a54585428ce84441199d9dfd7087e2243" kind="variable"><name>breathe_default_members</name></member>
+  </compound>
+  <compound refid="conf_8py" kind="file"><name>conf.py</name>
+  </compound>
+</doxygenindex>

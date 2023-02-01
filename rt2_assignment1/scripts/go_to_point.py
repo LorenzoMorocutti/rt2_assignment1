@@ -1,5 +1,40 @@
 #! /usr/bin/env python
+"""
+.. module:: go_to_point
+    :platform: Unix
+    :synopsis: Node that implements the go_to_point behavior
 
+.. moduleauthor:: Lorenzo Morocutti <lorenzo.morocutti@libero.it>
+
+Publishes to:
+    /cmd_vel(geometry_msgs.msg.Twist)
+    /destination(std_msgs.msg.Float32)
+
+Subscribes to:
+    /sub_odom(nav_msgs.msg.Odometry)
+    /sub_vel(geometry_msgs.msg.Twist)
+
+ServiceServer:
+   none
+
+ActionServer:
+    /go_to_point (rt2_assignment1.action.Moving)
+
+ Description:
+ 
+ The node controls the behavior of the non-holonomic
+ according to the go_to_point behavior via an action
+ server. A FSM is used to model the behavior every 
+ time a new goal pose is received: firstly the robot
+ alight its position with the goal's one, then it goes
+ straight to the goal position, it aligns with the 
+ goal orientation and then the goal pose is reached.
+
+ The linear and angular velocities are set by the node
+ /user_interface and they are received on the topic 
+ /vel. Both the velocities are set to zero in case
+ the goal is cancelled by the client.
+"""
 
 import rospy
 from std_msgs.msg import Float32
@@ -38,6 +73,15 @@ vel.angular.z = 0.5
 vel.linear.x = 0.5
 
 def clbk_odom(msg):
+    """
+        This function is the Odometry callback
+        It retrieves (x,y,theta) from the Odom message.
+            
+        Args: 
+            msg (Odometry): odometry message.
+        Returns:
+             None
+    """
     global position_
     global yaw_
 
@@ -55,22 +99,63 @@ def clbk_odom(msg):
 
 
 def change_state(state):
+    """
+        This function has the scope to update the current global state
+
+        Args:
+            state (int): new updated state
+        Returns:
+            None
+    """
     global state_
     state_ = state
     print ('State changed to [%s]' % state_)
 
 
 def normalize_angle(angle):
+    """
+        This function normalizes the angle between [-pi,pi].
+
+        Args:
+            angle (float): input angle
+        Returns:
+            angle (float): normalized angle
+    """
     if(math.fabs(angle) > math.pi):
         angle = angle - (2 * math.pi * angle) / (math.fabs(angle))
     return angle
 
 
 def velocity_clbk(velocity):
+    """
+        The data received on the topic /vel are saved in vel, a global 
+        variable of type Twist.
+
+        Args:
+            velocity (float): input velocity
+        Returns:
+            None
+    """
     vel.linear.x = velocity.linear.x
     vel.angular.z = velocity.angular.z
 
 def fix_yaw(des_pos):
+    """
+        This function orients the robot in the desidered way.
+        The function is used in two situations:
+            1. When the robot has to be oriented toward 
+               the goal (x,y) position.
+            2. When the robot has already reached the goal (x,y) position and 
+               it has to achieve the goal orientation.
+        It sets the angular velocity to reach the goal position.
+        It also updates the state to the behavior go_straight, based on 
+        the orientation error.
+
+        Args:
+            des_pos (Point): desidered (x,y) position
+        Returns:
+            None
+    """
     desired_yaw = math.atan2(des_pos.y - position_.y, des_pos.x - position_.x)
     err_yaw = normalize_angle(desired_yaw - yaw_)
     rospy.loginfo(err_yaw)
@@ -89,6 +174,17 @@ def fix_yaw(des_pos):
 
 
 def go_straight_ahead(des_pos):
+    """
+        This function implements the behavior that allows the
+        robot to reach the goal.
+        It sets the linear and angular velocities depending on the
+        distance to the goal pose.
+
+        Args:
+            des_pos (Point): desidered (x,y) position
+        Returns:
+            None
+    """
     desired_yaw = math.atan2(des_pos.y - position_.y, des_pos.x - position_.x)
     err_yaw = desired_yaw - yaw_
     err_pos = math.sqrt(pow(des_pos.y - position_.y, 2) +
@@ -114,6 +210,20 @@ def go_straight_ahead(des_pos):
         change_state(0)
 
 def fix_final_yaw(des_yaw):
+    """
+        This function orients the robot in the desidered 
+        orientation, based the error between the current 
+        orientation and the desired one.
+        It sets the angular velocity to obtain the desidered
+        orientation.
+        It also updates the state to done, once the orientation
+        is set. 
+
+        Args:
+            des_yaw (float): desidered (theta) position
+        Returns:
+            None
+    """
     err_yaw = normalize_angle(des_yaw - yaw_)
     rospy.loginfo(err_yaw)
     twist_msg = Twist()
@@ -130,15 +240,44 @@ def fix_final_yaw(des_yaw):
         change_state(3)
         
 def done():
+    """
+        This funciton has the aim of stopping the robot.
+        It sets the linear and the angular velocity to zero.
+
+        Args:
+            None
+        Returns:
+            None
+    """
     twist_msg = Twist()
     twist_msg.linear.x = 0
     twist_msg.angular.z = 0
     pub_.publish(twist_msg)
 
 def time_check(e_t):
+    """
+        This function checks the time.
+
+        Args:
+            e_t (float): elapsed time
+        Returns:
+            None
+    """
     pub_t.publish(e_t)
 
 def go_to_point(req):
+    """
+        This function implements the state machine.
+        It sets the correct behavior that the robot
+        will follow, based on the current robot state.
+        The FMS continues until the goal is reached or
+        the goal is cancelled
+
+        Args:
+            req (MovingActionGoal):(x,y,theta) goal pose)
+        Returns:
+            None
+    """
     print("request received")
     start_time = time.time()
 
