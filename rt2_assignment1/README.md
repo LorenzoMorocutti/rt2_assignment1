@@ -63,3 +63,7 @@ The robot is already on the point (0, 0) and will move to random positions as lo
 ![immagine](rqt_graph_ass1.jpeg)
 
 When the simulation is running, the scheme of the architecture is this one in the picture. The sim_ros_interface of CoppeliaSim gives, through messagges on the topic /odom, information about the position and orientation of the robot, to the go_to_point node that publish the right velocities on /cmd_vel.  
+
+## Future implementation
+
+One of the problem I encountered was the precision in reaching the goal: if the linear/angular velocities were too high (even if not unreasonable) the robot was not enough precise and needed to go forth and back to settle, so I had to lower the values of them. One future implementation could be to slow down the robot in proximity of the goal to avoid being to slow in the first part of the movement and too fast in the latter part.
