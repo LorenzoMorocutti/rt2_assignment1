@@ -18,7 +18,7 @@ namespace rt2_assignment1_ros2
         public:
             RP(const rclcpp::NodeOptions & options) : Node("position", options)
             {
-                serv = this->create_service<RandPos>("/position_server", std::bind(&RP::handle, this, _1, _2, _3));
+                serv = this->create_service<RandPos>("/position_server", std::bind(&RP::handle_serv, this, _1, _2, _3));
             }
 
         private:
@@ -27,7 +27,7 @@ namespace rt2_assignment1_ros2
                 return M + (rand() / ( RAND_MAX / (N-M)));
             }
 
-            void handle(
+            void handle_serv(
                 const std::shared_ptr<rmw_request_id_t> request_header,
                 const std::shared_ptr<RandPos::Request> req,
                 const std::shared_ptr<RandPos::Response> res

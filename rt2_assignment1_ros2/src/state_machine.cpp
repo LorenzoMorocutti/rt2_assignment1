@@ -25,7 +25,7 @@ namespace rt2_assignment1_ros2
     class GoalToReachClient: public rclcpp::Node
     {
         public:
-            GoalToReachClient() : Node("GoalToReachClient")
+            GoalToReachClient() : Node("GoalToReach")
                 {
                     goto_client = this->create_client<Pos>("/go_to_point");
                     this->req = std::make_shared<Pos::Request>();
@@ -53,9 +53,9 @@ namespace rt2_assignment1_ros2
         public:
             FSM(const rclcpp::NodeOptions & options) : Node("FiniteStateMac", options)
             {
-                clock = this->create_wall_timer(std::chrono::milliseconds(500), std::bind(&FSM::Timer_cb, this));
+                Timer = this->create_wall_timer(std::chrono::milliseconds(500), std::bind(&FSM::Timer_clbk, this));
                 service = this->create_service<Comm>("/user_interface", std::bind(&FSM::srv_handle, this, _1, _2, _3));
-                PosClient = this->create_client<RandPos>("/position_server");
+                RandPosClient = this->create_client<RandPos>("/position_server");
             }
 
         private:
@@ -77,7 +77,7 @@ namespace rt2_assignment1_ros2
                 }
             }
 
-            void Timer_cb()
+            void Timer_clbk()
             {
                 auto r_pos = std::make_shared<RandPos::Request>();
                 if(do_once == false)
@@ -96,7 +96,7 @@ namespace rt2_assignment1_ros2
                     r_pos->y_min = -5.0;
 
                     using SrvFuture = rclcpp::Client<RandPos>::SharedFuture;
-                    auto got_response_cb = [this] (SrvFuture future)
+                    auto got_response_clbk = [this] (SrvFuture future)
                     {
                         auto goal = std::make_shared<GoalToReachClient>();
                         goal->req->x=future.get()->x;
@@ -107,14 +107,14 @@ namespace rt2_assignment1_ros2
                         std::cout<<"Goal has been reached"<<std::endl;
                     };
 
-                    auto goto_result = PosClient->async_send_request(r_pos, got_response_cb);
+                    auto goto_result = RandPosClient->async_send_request(r_pos, got_response_clbk);
                     do_once = false; 
                 }
             }
 
             rclcpp::Service<Comm>::SharedPtr service;
-            rclcpp::TimerBase::SharedPtr clock;
-            rclcpp::Client<RandPos>::SharedPtr PosClient;
+            rclcpp::TimerBase::SharedPtr Timer;
+            rclcpp::Client<RandPos>::SharedPtr RandPosClient;
     };
 }
 

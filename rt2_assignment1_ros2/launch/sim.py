@@ -13,11 +13,11 @@ def generate_launch_description():
                 ComposableNode(
                     package='rt2_assignment1_ros2',
                     plugin='rt2_assignment1_ros2::RP',
-                    name='rp'),
+                    name='position_serv'),
                 ComposableNode(
                     package='rt2_assignment1_ros2',
                     plugin='rt2_assignment1_ros2::FSM',
-                    name='fsm')
+                    name='finitesm')
             ],
             output='screen',
     )

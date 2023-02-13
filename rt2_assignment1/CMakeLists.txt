@@ -132,8 +132,8 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
- add_executable(position_service src/position_service.cpp)
- add_executable(state_machine src/state_machine.cpp)
+## add_executable(position_service src/position_service.cpp)
+## add_executable(state_machine src/state_machine.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -143,17 +143,17 @@ include_directories(
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
- add_dependencies(position_service ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
- add_dependencies(state_machine ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+## add_dependencies(position_service ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+## add_dependencies(state_machine ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
  
 ## Specify libraries to link a library or executable target against
- target_link_libraries(position_service
-   ${catkin_LIBRARIES}
- )
+## target_link_libraries(position_service
+##   ${catkin_LIBRARIES}
+## )
  
- target_link_libraries(state_machine
-   ${catkin_LIBRARIES}
- )
+## target_link_libraries(state_machine
+##   ${catkin_LIBRARIES}
+## )
 
 #############
 ## Install ##
@@ -164,10 +164,10 @@ include_directories(
 
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
- catkin_install_python(PROGRAMS
-   scripts/go_to_point.py scripts/user_interface.py
-   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
- )
+## catkin_install_python(PROGRAMS
+##   scripts/go_to_point.py scripts/user_interface.py
+##   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+## )
 
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
