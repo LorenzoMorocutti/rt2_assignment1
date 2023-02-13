@@ -1,0 +1,3 @@
+[0.000000] (-) TimerEvent: {}
+[0.000405] (-) JobUnselected: {'identifier': 'rt2_assignment1_ros2'}
+[0.000978] (-) EventReactorShutdown: {}
